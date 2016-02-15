@@ -32,6 +32,7 @@ ls $RAILS_DIR/.sti
 
 cp $RAILS_DIR/.sti/files/unicorn.rb $RAILS_DIR/config/unicorn.rb
 cp $RAILS_DIR/.sti/files/*.yml $RAILS_DIR/config/
+cp $RAILS_DIR/.sti/files/Gemfile.lock $RAILS_DIR/
 
 
 echo "--> Prepare directories"
