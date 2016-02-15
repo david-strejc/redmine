@@ -18,6 +18,6 @@ cd $RAILS_DIR
 
 rvm use $RUBY_VERSION
 bundle exec rake db:migrate RAILS_ENV=production
-bundle exec rake easyproject:install RAILS_ENV=production
+#bundle exec rake easyproject:install RAILS_ENV=production
 
 unicorn -c ./config/unicorn.rb -E production
