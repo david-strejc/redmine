@@ -1,0 +1,9 @@
+default:
+  email_delivery:
+    delivery_method: :smtp
+    smtp_settings:
+      address: <% ENV['MAILSERVER_HOST'] %>
+      port: <% ENV['MAILSERVER_PORT'] %>
+      domain: <% ENV['DOMAIN'] %>
+      authentication: :none
+      enable_starttls_auto: false

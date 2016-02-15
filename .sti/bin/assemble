@@ -1,0 +1,70 @@
+#!/bin/bash -l
+
+env
+
+echo "--> BUILD Start"
+source /opt/app-root/src/.profile
+
+echo "--> Clone git"
+cd $RAILS_DIR
+pwd
+git init
+git remote add origin $SOURCE_REPOSITORY_URL
+git pull origin $SOURCE_REPOSITORY_BRANCH --force
+git checkout $SOURCE_REPOSITORY_BRANCH --force
+pwd
+ls
+
+echo "--> RVM version"
+rvm version || echo "No rvm"
+
+#if [ ! -e /opt/app-root/src/bin/bundle ]; then
+#  echo "--> Install RVM"
+#  rvm install $RUBY_VERSION && rvm use $RUBY_VERSION --default
+#
+#  echo "--> Install bundler and unicorn"
+#  gem install bundler unicorn --no-rdoc --no-ri
+#fi
+
+echo "--> Configure application"
+ls $RAILS_DIR
+ls $RAILS_DIR/.sti
+
+cp $RAILS_DIR/.sti/files/unicorn.rb $RAILS_DIR/config/unicorn.rb
+cp $RAILS_DIR/.sti/files/*.yml $RAILS_DIR/config/
+
+
+echo "--> Prepare directories"
+for d in log files
+do
+  [[ -d $RAILS_DIR/$d ]] || mkdir $RAILS_DIR/$d
+  chmod 770 -R $RAILS_DIR/$d
+done
+
+
+echo "--> Show ruby version and gems"
+cd $RAILS_DIR
+source /opt/app-root/src/.profile
+rvm list
+rvm use 2.1.2
+ruby -v
+gem list
+
+#bundle install --without development test
+#
+#if [ ! -e $RAILS_DIR/files/dont_restore_db ]; then
+#  echo "--> Restore db from $DB_DUMP_URL to $MYSQL_SERVICE_HOST"
+#  wget -q -O- $DB_DUMP_URL | zcat | mysql -h $MYSQL_SERVICE_HOST \
+#                                        -u $DATABASE_USER \
+#                                        -p$DATABASE_PASSWORD $DATABASE_NAME
+#  touch $RAILS_DIR/files/dont_restore_db
+#fi
+
+echo "--> Install missing gems"
+bundle install --without development test
+
+echo "--> Migrate database"
+bundle exec rake db:migrate RAILS_ENV=production
+
+# Fix source directory permissions!!!!!!!!!!
+fix-permissions ./ || echo "OK"

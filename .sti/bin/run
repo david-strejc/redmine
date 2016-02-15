@@ -1,0 +1,23 @@
+#!/bin/bash
+
+env
+
+echo "--> Configure application"
+cd $RAILS_DIR
+ls -la
+ls -la ./config
+
+
+#[ -e $RAILS_DIR/config/unicorn.rb ] || cp $RAILS_DIR/.sti/files/unicorn.rb $RAILS_DIR/config/unicorn.rb && echo "RUN: zbytecne $RAILS_DIR/config/unicorn.rb"
+#[ -e $RAILS_DIR/config/database.yml ] || cp $RAILS_DIR/.sti/files/*.yml $RAILS_DIR/config/ && echo "RUN: zbytecne $RAILS_DIR/.sti/files/*.yml"
+
+
+echo "Starting Application"
+source $RAILS_DIR/.profile
+cd $RAILS_DIR
+
+rvm use $RUBY_VERSION
+bundle exec rake db:migrate RAILS_ENV=production
+bundle exec rake easyproject:install RAILS_ENV=production
+
+unicorn -c ./config/unicorn.rb -E production
