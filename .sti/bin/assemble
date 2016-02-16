@@ -67,5 +67,8 @@ bundle install --without development test
 echo "--> Migrate database"
 bundle exec rake db:migrate RAILS_ENV=production
 
+echo "--> Generate secret token"
+bundle exec rake generate_secret_token
+
 # Fix source directory permissions!!!!!!!!!!
 fix-permissions ./ || echo "OK"
